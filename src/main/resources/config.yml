@@ -1,0 +1,29 @@
+## AntiBranchingMining configuration
+##
+## enabled                    - Whether AntiBranchMining is enabled by default (this can be overridden in worlds)
+## removal-factor             - The percentage of ore veins removed that are only accessible through branch-mining
+##                              (default 100 percent)
+## ores                       - All materials that should be counted as ores for searching purposes
+## excluded                   - Ores that should not be removed even if only accessible through branch-mining
+## max-height                 - Ores will only be checked from bedrock to this height
+## ore-replacement-material   - What to replace ores with when they are removed (default is stone)
+## max-work-duration-per-tick - The amount of time in nanoseconds that AntiBranchMining is allowed to work for per tick
+##                              Lower this if you are getting lag spikes, however it will slow down ore removal.
+##                              (default is 45000000 nanoseconds = 0.045 seconds)
+## worlds                     - Add world specific settings
+##                                - enabled                  - Whether to run AntiBranchMining on this world
+##                                - ores                     - Materials that should be counted as ores for searching
+##                                                             on this world. Useful for different world generators
+##                                                             e.g. nether quartz
+##                                - excluded                 - Excluded ores for this specific world
+##                                - max-height               - The maximum height to remove ores from in this world
+##                                - removal-factor           - The percentage of ore veins removed in this world
+##                                - ore-replacement-material - The specific ore replacement material for this world.
+##                                                             Useful if you are using custom world generation with a
+##                                                             different base material than stone
+---
+enabled: true
+excluded: {}
+max-height: 64
+worlds: {}
+max-work-duration-per-tick: 45000000

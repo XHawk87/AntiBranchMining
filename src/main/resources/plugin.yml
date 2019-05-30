@@ -1,0 +1,15 @@
+name: ${project.name}
+main: ${project.groupId}.${project.artifactId}.${project.name}
+version: ${project.version}
+description: ${project.description}
+load: STARTUP
+
+commands:
+  orestats:
+    description: Displays stats about ore composition in the affected region and the average time taken to remove ores. "stats" must be set to true in the config.yml to see ore composition information.
+    usage: /orestats
+    permissions: antibranchmining.commands.orestats
+permissions:
+  antibranchmining.commands.orestats:
+    description: Allows viewing ore stats for the world
+    default: op
