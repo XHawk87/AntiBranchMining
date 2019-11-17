@@ -19,6 +19,7 @@ package me.xhawk87.AntiBranchMining.listeners;
 import me.xhawk87.AntiBranchMining.AntiBranchMining;
 import me.xhawk87.AntiBranchMining.ChunkOreRemover;
 import me.xhawk87.AntiBranchMining.WorldData;
+import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -26,7 +27,6 @@ import org.bukkit.event.world.ChunkPopulateEvent;
 import org.bukkit.event.world.WorldInitEvent;
 
 /**
- *
  * @author XHawk87
  */
 public class WorldListener implements Listener {
@@ -39,18 +39,23 @@ public class WorldListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onChunkPopulate(ChunkPopulateEvent event) {
-        WorldData worldData = plugin.getWorldData(event.getWorld());
-        if (!worldData.isEnabled()) {
-            return;
-        }
-        ChunkOreRemover remover = new ChunkOreRemover(worldData, event.getChunk());
-        if (plugin.isChunkPopulated(remover)) {
-            plugin.getLogger().warning("Populated " + worldData.getWorld().getName() + " " + remover.getChunkX() + "," + remover.getChunkZ() + " again");
-            return; // This is a hack to prevent ChunkPopulateEvent spam from crippling server performance
-        }
-        worldData.logQueued(remover);
-        plugin.addToPopulated(remover);
+    public void onChunkPopulate(final ChunkPopulateEvent event) {
+        Bukkit.getScheduler().runTask(plugin, new Runnable() {
+            @Override
+            public void run() {
+                WorldData worldData = plugin.getWorldData(event.getWorld());
+                if (!worldData.isEnabled()) {
+                    return;
+                }
+                ChunkOreRemover remover = new ChunkOreRemover(worldData, event.getChunk());
+                if (plugin.isChunkPopulated(remover)) {
+                    plugin.getLogger().warning("Populated " + worldData.getWorld().getName() + " " + remover.getChunkX() + "," + remover.getChunkZ() + " again");
+                    return; // This is a hack to prevent ChunkPopulateEvent spam from crippling server performance
+                }
+                worldData.logQueued(remover);
+                plugin.addToPopulated(remover);
+            }
+        });
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
