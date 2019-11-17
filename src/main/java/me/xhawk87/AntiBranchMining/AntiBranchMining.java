@@ -44,6 +44,7 @@ public class AntiBranchMining extends JavaPlugin {
             Material.IRON_ORE, Material.COAL_ORE, Material.LAPIS_ORE, Material.REDSTONE_ORE, Material.EMERALD_ORE,
             Material.NETHER_QUARTZ_ORE);
     private HashSet<ChunkOreRemover> populated = new HashSet<>();
+    private HashSet<ChunkOreRemover> checked = new HashSet<>();
     private HashMap<UUID, WorldData> worlds = new HashMap<>();
     private boolean enabled;
     private int removalFactor;
@@ -111,7 +112,7 @@ public class AntiBranchMining extends JavaPlugin {
     public void addToPopulated(ChunkOreRemover populatedChunkRemover) {
         populated.add(populatedChunkRemover);
         for (ChunkOreRemover remover : populatedChunkRemover.getLocalGroup()) {
-            if (populated.containsAll(remover.getLocalGroup())) {
+            if (!checked.contains(remover) && populated.containsAll(remover.getLocalGroup())) {
                 toCheck.add(remover);
                 if (tick == null) {
                     final AntiBranchMining plugin = this;
@@ -120,7 +121,9 @@ public class AntiBranchMining extends JavaPlugin {
                         public void run() {
                             long started = System.nanoTime();
                             while (!toCheck.isEmpty() && System.nanoTime() - started < maxWorkDurationPerTick) {
-                                toCheck.pop().run();
+                                ChunkOreRemover checking = toCheck.pop();
+                                checking.run();
+                                checked.add(checking);
                             }
                             if (toCheck.isEmpty()) {
                                 tick = null;
