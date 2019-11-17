@@ -262,7 +262,7 @@ public class WorldData {
         for (Map.Entry<Material, Integer> entry : remaining.entrySet()) {
             Material material = entry.getKey();
             int amount = entry.getValue();
-            sb.append(" ").append(material.getId()).append(":").append(amount);
+            sb.append(" ").append(material.getKey().getKey()).append(":").append(amount);
             if (this.remaining.containsKey(material)) {
                 this.remaining.put(material, this.remaining.get(material) + amount);
             } else {
