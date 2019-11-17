@@ -45,8 +45,9 @@ public class WorldListener implements Listener {
             return;
         }
         ChunkOreRemover remover = new ChunkOreRemover(worldData, event.getChunk());
-        if (!plugin.wasChecked(remover)) {
+        if (plugin.wasChecked(remover)) {
             plugin.getLogger().warning("Populated " + worldData.getWorld().getName() + " " + remover.getChunkX() + "," + remover.getChunkZ() + " again");
+            return; // This is a hack to prevent ChunkPopulateEvent spam from crippling server performance
         }
         worldData.logQueued(remover);
         plugin.queue(remover);
