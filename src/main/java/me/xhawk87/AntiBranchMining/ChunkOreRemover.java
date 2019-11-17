@@ -34,9 +34,13 @@ public class ChunkOreRemover implements Runnable {
     private int chunkX, chunkZ;
     
     public ChunkOreRemover(WorldData worldData, Chunk chunk) {
+        this(worldData, chunk.getX(), chunk.getZ());
+    }
+    
+    public ChunkOreRemover(WorldData worldData, int x, int y) {
         this.worldData = worldData;
-        this.chunkX = chunk.getX();
-        this.chunkZ = chunk.getZ();
+        this.chunkX = x;
+        this.chunkZ = y;
     }
     
     private Block getBlock(Chunk chunk, int dx, int y, int dz) {
@@ -213,7 +217,7 @@ public class ChunkOreRemover implements Runnable {
         Set<ChunkOreRemover> neighbours = new HashSet<>();
         for (int dx = -1; dx <= 1; dx += 1) {
             for (int dz = -1; dz <= 1; dz += 1) {
-                neighbours.add(new ChunkOreRemover(worldData, worldData.getWorld().getChunkAt(chunkX + dx, chunkZ + dz)));
+                neighbours.add(new ChunkOreRemover(worldData, chunkX + dx, chunkZ + dz));
             }
         }
         return neighbours;
