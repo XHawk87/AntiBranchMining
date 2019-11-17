@@ -48,6 +48,9 @@ public class AsyncFileWriter {
                 public void run() {
                     try (BufferedWriter out = new BufferedWriter(new FileWriter(file, true))) {
                         while (running){
+                            if (lines.isEmpty()) {
+                                out.flush(); // Always flush before blocking
+                            }
                             out.write(lines.takeFirst());
                         }
                     } catch (IOException|InterruptedException ex) {
