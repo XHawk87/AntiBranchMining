@@ -4,7 +4,7 @@
 
     <groupId>me.xhawk87</groupId>
     <artifactId>AntiBranchMining</artifactId>
-    <version>0.5-Pre-3</version>
+    <version>0.5-Pre-4</version>
     <packaging>jar</packaging>
 
     <name>AntiBranchMining</name>

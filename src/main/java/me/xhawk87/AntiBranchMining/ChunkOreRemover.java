@@ -208,4 +208,14 @@ public class ChunkOreRemover implements Runnable {
     public String toString() {
         return chunkX + "," + chunkZ;
     }
+
+    public Set<ChunkOreRemover> getLocalGroup() {
+        Set<ChunkOreRemover> neighbours = new HashSet<>();
+        for (int dx = -1; dx <= 1; dx += 1) {
+            for (int dz = -1; dz <= 1; dz += 1) {
+                neighbours.add(new ChunkOreRemover(worldData, worldData.getWorld().getChunkAt(chunkX + dx, chunkZ + dz)));
+            }
+        }
+        return neighbours;
+    }
 }

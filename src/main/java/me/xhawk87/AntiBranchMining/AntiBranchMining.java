@@ -43,7 +43,7 @@ public class AntiBranchMining extends JavaPlugin {
     private static final EnumSet<Material> defaultOres = EnumSet.of(Material.DIAMOND_ORE, Material.GOLD_ORE,
             Material.IRON_ORE, Material.COAL_ORE, Material.LAPIS_ORE, Material.REDSTONE_ORE, Material.EMERALD_ORE,
             Material.NETHER_QUARTZ_ORE);
-    private HashSet<ChunkOreRemover> checked = new HashSet<>();
+    private HashSet<ChunkOreRemover> populated = new HashSet<>();
     private HashMap<UUID, WorldData> worlds = new HashMap<>();
     private boolean enabled;
     private int removalFactor;
@@ -53,7 +53,7 @@ public class AntiBranchMining extends JavaPlugin {
     private Material oreReplacer;
     private long maxWorkDurationPerTick;
     private BukkitTask tick = null;
-    private ArrayDeque<ChunkOreRemover> queue = new ArrayDeque<>();
+    private ArrayDeque<ChunkOreRemover> toCheck = new ArrayDeque<>();
 
     @Override
     public void onEnable() {
@@ -108,26 +108,30 @@ public class AntiBranchMining extends JavaPlugin {
         }
     }
 
-    public void queue(ChunkOreRemover remover) {
-        queue.add(remover);
-        if (tick == null) {
-            final AntiBranchMining plugin = this;
-            tick = Bukkit.getScheduler().runTask(this, new Runnable() {
-                @Override
-                public void run() {
-                    long started = System.nanoTime();
-                    while (!queue.isEmpty() && System.nanoTime() - started < maxWorkDurationPerTick) {
-                        queue.pop().run();
-                    }
-                    if (queue.isEmpty()) {
-                        tick = null;
-                    } else {
-                        tick = Bukkit.getScheduler().runTask(plugin, this);
-                    }
+    public void addToPopulated(ChunkOreRemover populatedChunkRemover) {
+        populated.add(populatedChunkRemover);
+        for (ChunkOreRemover remover : populatedChunkRemover.getLocalGroup()) {
+            if (populated.containsAll(remover.getLocalGroup())) {
+                toCheck.add(remover);
+                if (tick == null) {
+                    final AntiBranchMining plugin = this;
+                    tick = Bukkit.getScheduler().runTask(this, new Runnable() {
+                        @Override
+                        public void run() {
+                            long started = System.nanoTime();
+                            while (!toCheck.isEmpty() && System.nanoTime() - started < maxWorkDurationPerTick) {
+                                toCheck.pop().run();
+                            }
+                            if (toCheck.isEmpty()) {
+                                tick = null;
+                            } else {
+                                tick = Bukkit.getScheduler().runTask(plugin, this);
+                            }
+                        }
+                    });
                 }
-            });
+            }
         }
-        checked.add(remover);
     }
 
     public EnumSet<Material> getDefaultExcludedOres() {
@@ -168,8 +172,8 @@ public class AntiBranchMining extends JavaPlugin {
         return worldData;
     }
 
-    public boolean wasChecked(ChunkOreRemover remover) {
-        return checked.contains(remover);
+    public boolean isChunkPopulated(ChunkOreRemover remover) {
+        return populated.contains(remover);
     }
 
     public WorldData registerWorld(World world) {

@@ -228,7 +228,7 @@ public class WorldData {
                     new BukkitRunnable() {
                         @Override
                         public void run() {
-                            plugin.queue(new ChunkOreRemover(worldData, getWorld().getChunkAt(x, z)));
+                            plugin.addToPopulated(new ChunkOreRemover(worldData, getWorld().getChunkAt(x, z)));
                         }
                     }.runTaskLater(plugin, i++);
                 }
@@ -287,7 +287,7 @@ public class WorldData {
         new BukkitRunnable() {
             @Override
             public void run() {
-                plugin.queue(remover);
+                plugin.addToPopulated(remover);
             }
         }.runTaskLater(plugin, 100);
     }

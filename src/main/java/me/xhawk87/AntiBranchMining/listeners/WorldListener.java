@@ -45,12 +45,12 @@ public class WorldListener implements Listener {
             return;
         }
         ChunkOreRemover remover = new ChunkOreRemover(worldData, event.getChunk());
-        if (plugin.wasChecked(remover)) {
+        if (plugin.isChunkPopulated(remover)) {
             plugin.getLogger().warning("Populated " + worldData.getWorld().getName() + " " + remover.getChunkX() + "," + remover.getChunkZ() + " again");
             return; // This is a hack to prevent ChunkPopulateEvent spam from crippling server performance
         }
         worldData.logQueued(remover);
-        plugin.queue(remover);
+        plugin.addToPopulated(remover);
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
